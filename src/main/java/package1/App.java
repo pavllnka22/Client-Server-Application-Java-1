@@ -2,15 +2,39 @@ package package1;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class App {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
-        if (args.length < 1) {
-            System.err.println("Please provide an input!");
-            System.exit(0);
-        }
-        System.out.println(sha256hex(args[0]));
+        BlockingQueue<byte[]> rawQueue = new LinkedBlockingQueue<>(100);
+        BlockingQueue<Message> decryptedQueue = new LinkedBlockingQueue<>(100);
+        BlockingQueue<Message> responseQueue = new LinkedBlockingQueue<>(100);
+        BlockingQueue<byte[]> encryptedQueue = new LinkedBlockingQueue<>(100);
+
+        int receiversCount = 2;
+        int decriptorsCount = 2;
+        int processorsCount = 4;
+        int encriptorsCount = 3;
+        int sendersCount = 5;
+
+        int totalThreads = receiversCount + decriptorsCount + processorsCount + encriptorsCount + sendersCount;
+        ExecutorService threadPool = Executors.newFixedThreadPool(totalThreads);
+
+        for (int i = 0; i < receiversCount; i++) threadPool.submit(new Receiver(rawQueue));
+        for (int i = 0; i < decriptorsCount; i++) threadPool.submit(new Decriptor(rawQueue, decryptedQueue));
+        for (int i = 0; i < processorsCount; i++) threadPool.submit(new Processor(decryptedQueue, responseQueue));
+        for (int i = 0; i < encriptorsCount; i++) threadPool.submit(new Encriptor(responseQueue, encryptedQueue));
+        for (int i = 0; i < sendersCount; i++) threadPool.submit(new Sender(encryptedQueue));
+
+
+        Thread.sleep(4000);
+
+        threadPool.shutdownNow();
 
     }
 
