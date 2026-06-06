@@ -27,7 +27,7 @@ public class App {
 
         for (int i = 0; i < receiversCount; i++) threadPool.submit(new Receiver(rawQueue));
         for (int i = 0; i < decriptorsCount; i++) threadPool.submit(new Decriptor(rawQueue, decryptedQueue));
-        for (int i = 0; i < processorsCount; i++) threadPool.submit(new Processor(decryptedQueue, responseQueue));
+        //for (int i = 0; i < processorsCount; i++) threadPool.submit(new Processor(decryptedQueue, responseQueue));
         for (int i = 0; i < encriptorsCount; i++) threadPool.submit(new Encriptor(responseQueue, encryptedQueue));
         for (int i = 0; i < sendersCount; i++) threadPool.submit(new Sender(encryptedQueue));
 

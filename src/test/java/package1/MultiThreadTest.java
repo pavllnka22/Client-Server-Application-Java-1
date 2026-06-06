@@ -19,8 +19,8 @@ class MultiThreadTest {
         executor.submit(new Decriptor(rawQueue, decryptedQueue));
         executor.submit(new Decriptor(rawQueue, decryptedQueue));
 
-        executor.submit(new Processor(decryptedQueue, responseQueue));
-        executor.submit(new Processor(decryptedQueue, responseQueue));
+        //executor.submit(new Processor(decryptedQueue, responseQueue));
+       // executor.submit(new Processor(decryptedQueue, responseQueue));
 
         executor.submit(new Encriptor(responseQueue, encryptedQueue));
         executor.submit(new Encriptor(responseQueue, encryptedQueue));

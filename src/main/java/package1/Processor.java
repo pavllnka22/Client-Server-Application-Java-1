@@ -1,5 +1,8 @@
 package package1;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.concurrent.BlockingQueue;
 
 public class Processor implements Runnable {
@@ -7,9 +10,14 @@ public class Processor implements Runnable {
     private final BlockingQueue<Message> inputQueue;
     private final BlockingQueue<Message> outputQueue;
 
-    public Processor(BlockingQueue<Message> inputQueue, BlockingQueue<Message> outputQueue) {
+    private final StoreServices storeServices;
+
+    final ObjectMapper objectMapper = new ObjectMapper();
+
+    public Processor(BlockingQueue<Message> inputQueue, BlockingQueue<Message> outputQueue, StoreServices storeServices) {
         this.inputQueue = inputQueue;
         this.outputQueue = outputQueue;
+        this.storeServices = storeServices;
     }
 
     @Override
@@ -19,13 +27,28 @@ public class Processor implements Runnable {
                 Message request = inputQueue.take();
 
                 CommandType type = CommandType.fromId(request.getCommandId());
+                String responseText = "OK";
                 switch (type) {
-                    case GET_QUANTITY -> System.out.println("Item quantity check");
-                    case DELETE_ITEMS -> System.out.println("Delete items");
-                    case ADD_ITEMS -> System.out.println("Adding items");
-                    case ADD_GROUP -> System.out.println("Adding group of items");
-                    case ADD_ITEMS_TO_GROUP -> System.out.println("Adding items to group");
-                    case SET_PRICE -> System.out.println("Setting price");
+                    case GET_QUANTITY :
+                        String productId = request.getEncryptedMessage();
+                        responseText = storeServices.read(productId)
+                                .map(p -> "Quantity: " + p.getQuantity())
+                                .orElse("Product was not found");
+                        break;
+                    case DELETE_ITEMS:
+                        responseText ="Delete items";
+                    case ADD_ITEMS :
+                        Product newProduct = objectMapper.readValue(request.getEncryptedMessage(), Product.class);
+                        storeServices.create(newProduct);
+                        responseText = "Product created successfully";
+                        break;
+                    case ADD_GROUP:
+                        responseText = "Adding group of items";
+                    case ADD_ITEMS_TO_GROUP:
+                        responseText = "Adding items to group";
+                    case SET_PRICE:
+                        responseText = "Setting price";
+
                 }
 
                 Message response = new Message(
@@ -33,11 +56,11 @@ public class Processor implements Runnable {
                         request.getMessageNumber(),
                         request.getCommandId(),
                         request.getSenderId(),
-                        "ok"
+                        responseText
                 );
                 outputQueue.put(response);
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | JsonProcessingException e) {
             Thread.currentThread().interrupt();
         }
     }
