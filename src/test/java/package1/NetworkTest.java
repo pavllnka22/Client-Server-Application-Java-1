@@ -2,6 +2,11 @@ package package1;
 
 
 import org.junit.jupiter.api.Test;
+import package1.client.StoreClientTCP;
+import package1.client.StoreClientUDP;
+import package1.protocol.Message;
+import package1.server.StoreServerTCP;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;

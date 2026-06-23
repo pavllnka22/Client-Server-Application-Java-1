@@ -1,7 +1,10 @@
-package package1;
+package package1.protocol;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import package1.CommandType;
+import package1.Product;
+import package1.StoreServices;
 
 import java.util.concurrent.BlockingQueue;
 

@@ -1,4 +1,4 @@
-package package1;
+package package1.server;
 
 import org.apache.commons.codec.binary.Hex;
 import java.util.concurrent.BlockingQueue;

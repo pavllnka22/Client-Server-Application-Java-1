@@ -1,4 +1,8 @@
-package package1;
+package package1.server;
+
+import package1.protocol.Message;
+import package1.protocol.Decrypter;
+import package1.protocol.Encrypter;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

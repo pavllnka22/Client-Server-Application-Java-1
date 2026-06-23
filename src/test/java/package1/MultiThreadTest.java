@@ -1,6 +1,12 @@
 package package1;
 
 import org.junit.jupiter.api.Test;
+import package1.protocol.Decriptor;
+import package1.protocol.Encriptor;
+import package1.protocol.Encrypter;
+import package1.protocol.Message;
+import package1.server.Sender;
+
 import java.util.concurrent.*;
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -1,4 +1,8 @@
-package package1;
+package package1.client;
+
+import package1.protocol.Decrypter;
+import package1.protocol.Encrypter;
+import package1.protocol.Message;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
